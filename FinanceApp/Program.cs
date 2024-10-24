@@ -6,7 +6,9 @@ using System.IO;
 using Newtonsoft.Json;
 using Spectre.Console;
 using NodaTime;
+using NodaTime.Text;
 
+using FinanceApp;
 //Main Namespace.
 namespace FinanceApp
 {
@@ -32,24 +34,24 @@ namespace FinanceApp
             while (running)
             {
 
-                ShowMenu();
-                string choice = Console.ReadLine();
+                
+                string choice = ShowMenu();
                 
                 switch (choice)
                 {
-                    case "1":
-                        AddRecurringPayment();
+                    case "Add Recurring Payment":
+                        AddNewRecurringPayment();
                         break;
-                    case "2":
+                    case "Add One-Off Payment":
                         AddOneOffPayment();
                         break;
-                    case "3":
+                    case "View Spending":
                         ViewSpending();
                         break;
-                    case "4":
+                    case "Create New Month Statement":
                         NewStatement();
                         break;
-                    case "5":
+                    case "Exit":
                         running = false;
                         AnsiConsole.Markup("[bold red]------[/]");
                         AnsiConsole.Markup("[bold red]----[/]");
@@ -62,23 +64,67 @@ namespace FinanceApp
             }
         }
 
-        static void ShowMenu()
+        public static string ShowMenu()
         {
-            AnsiConsole.Markup("\n[bold cyan]What would you like to do?[/]\n");
-            Console.WriteLine("1. Add Recurring Payment");
-            Console.WriteLine("2. Add One-Off Payment");
-            Console.WriteLine("3. View Spending");
-            Console.WriteLine("4. Create New Month Statement");
-            Console.WriteLine("5. Exit");
-            Console.Write("Enter your choice: ");
+            string Choice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("What would you like to do?")
+                    .AddChoices("Add Recurring Payment", "Add One-Off Payment", "View Spending", "Create New Month Statement", "Exit"));
+        
+        AnsiConsole.Clear();
+
+        return Choice;
         }
 
-        static void AddRecurringPayment()
+
+
+
+        public static void AddNewRecurringPayment()
         {
-            // Code for adding recurring payments (to be implemented)
-            Console.Clear();
-            AnsiConsole.Markup("[bold green]Adding Recurring Payment...[/]\n");
+            // Input for payment name using Spectre.Console
+            string name = AnsiConsole.Ask<string>("Enter the [green]payment name[/]:");
+
+            // Input for payment amount using Spectre.Console
+            decimal amount = AnsiConsole.Ask<decimal>("Enter the [green]payment amount[/]:");
+
+            // Input for start date using Spectre.Console (yyyy-MM-dd)
+            string startDateInput = AnsiConsole.Ask<string>("Enter the [green]start date[/] (format: yyyy-MM-dd):");
+            var startDatePattern = LocalDatePattern.Iso;
+            LocalDate startDate = startDatePattern.Parse(startDateInput).Value;
+
+            // Input for end date or allow ongoing payments using Spectre.Console
+            string endDateInput = AnsiConsole.Prompt(new TextPrompt<string>("Enter the [green]end date[/] (or press Enter for ongoing):").AllowEmpty());
+
+            LocalDate? endDate = null;
+            if (!string.IsNullOrEmpty(endDateInput))
+            {
+                endDate = startDatePattern.Parse(endDateInput).Value;  // Parse the end date if provided
+            }
+
+            // Input for payment type (Leisure or Mandatory) using Spectre.Console
+            string type = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Select the [green]payment type[/]:")
+                    .AddChoices("Leisure", "Mandatory"));
+
+            // Create a new RecurringPayment instance
+            RecurringPayment payment = new RecurringPayment
+            {
+                Name = name,
+                Amount = amount,
+                StartDate = startDate,
+                EndDate = endDate,
+                Type = type
+            };
+
+            // Call AddRecurringPayment method to store the payment
+            FileStorage.StoreRecurringPayment(payment);
+
+            // Display success message using Spectre.Console
+            AnsiConsole.Markup("[bold green]Recurring payment added successfully![/]");
         }
+
+
 
         static void AddOneOffPayment()
         {
@@ -93,7 +139,8 @@ namespace FinanceApp
             Console.Clear();
             AnsiConsole.Markup("[bold green]Viewing Spending...[/]\n");
         }
-        static void NewStatement()
+
+       static void NewStatement()
         {
             AnsiConsole.Markup("[bold cyan]Please Provide the Relevant year. YY [/]");
             string selectedYearInput = Console.ReadLine();
@@ -118,13 +165,34 @@ namespace FinanceApp
                 selectedMonthInput = Console.ReadLine();
             }
 
-            // Call the method to create the statement file, passing in the selected year and month
-            FileStorage.CreateStatementFile(selectedYear + 2000, selectedMonth, selectedMonth+1);  // Assuming the 2000s for the 2-digit year
+            // Determine the start and end months and handle the year overflow case
+            int endMonth = selectedMonth;  // End month is the selected month (no incrementing)
+            int endYear = selectedYear;  // Default to the same year
+            int startYear = selectedYear; // This will change if we are going back to December of the previous year
+            int startMonth = selectedMonth - 1; // Default: start from the previous month
+
+            if (selectedMonth == 1)
+            {
+                // Special case for January (month 1): start from December of the previous year
+                startMonth = 12;  // Start month becomes December
+                startYear = selectedYear - 1;  // Start in December of the previous year
+            }
+            else if (selectedMonth == 12)
+            {
+                // Special case for December: start from November, but end in December
+                startMonth = 11;  // Start in November
+            }
+
+            // Call the method to create the statement file, passing in the selected year and months
+            FileStorage.CreateStatementFile(startYear + 2000, startMonth, endYear + 2000, endMonth);  // Pass both the start and end years now
+
             Console.Clear();
             AnsiConsole.Markup("[bold green]Making A New Statement...[/]\n");
         }
 
-    private static bool TryGetMonthNumber(string input, out int monthNumber)
+
+
+        private static bool TryGetMonthNumber(string input, out int monthNumber)
         {
             // Try to parse the input directly if it's a number
             if (int.TryParse(input, out monthNumber) && monthNumber >= 1 && monthNumber <= 12)
@@ -148,25 +216,28 @@ namespace FinanceApp
             }
         }
 
+
+        public static List<RecurringPayment> GetActiveRecurringPayments(LocalDate statementMonth)
+        {
+        string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Finance", "recurring_payments.json");
+        
+        // Load the recurring payments from the file
+        if (!File.Exists(filePath))
+        {
+            return new List<RecurringPayment>();
+        }
+
+        string json = File.ReadAllText(filePath);
+        List<RecurringPayment> payments = JsonConvert.DeserializeObject<List<RecurringPayment>>(json);
+
+        // Filter the payments to only those that are active during the statement month
+        var activePayments = payments.Where(p => p.StartDate <= statementMonth && (p.EndDate == null || p.EndDate >= statementMonth)).ToList();
+        return activePayments;
+        }
+
+
     }
 
     
 
-
-    // Define your data models here
-    public class MonthlyStatement
-    {
-        public List<Payment> RecurringPayments { get; set; }
-        public List<Payment> OneOffPayments { get; set; }
-        public decimal TotalSpending { get; set; }
-        public decimal RemainingBalance { get; set; }
-    }
-
-    public class Payment
-    {
-        public string Name { get; set; }
-        public decimal Amount { get; set; }
-        public LocalDate Date { get; set; }  // Using NodaTime for dates
-        public string Note { get; set; }
-    }
 }
