@@ -29,20 +29,25 @@ public class FileStorage
         // Define the full file path
         string filePath = Path.Combine(financeDirectory, fileName);
 
-        // Check if the file already exists
         if (File.Exists(filePath))
         {
             // Provide feedback to the user
-            AnsiConsole.Markup($"[bold red]A statement for this period already exists: {fileName}.[/]");
-            AnsiConsole.Markup("[bold yellow]Do you want to overwrite it? (y/n): [/]");
-            string overwriteChoice = Console.ReadLine().ToLower();
+            AnsiConsole.Markup($"[bold red]A statement for this period already exists: {fileName}.\n[/]");
 
-            if (overwriteChoice != "y")
+            // Use a SelectionPrompt for Yes/No choices with arrow keys
+            string overwriteChoice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("[bold yellow]Do you want to overwrite it?[/]")
+                    .AddChoices("Yes", "No"));
+
+            if (overwriteChoice == "No")
             {
                 AnsiConsole.Markup("[bold yellow]Operation canceled. No changes were made.[/]");
                 return;  // Exit the method if the user doesn't want to overwrite the file
             }
         }
+
+
 
         // Create the file (empty for now, can be filled with statement info later)
         using (FileStream fs = File.Create(filePath))

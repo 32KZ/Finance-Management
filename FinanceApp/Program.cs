@@ -121,7 +121,7 @@ namespace FinanceApp
             FileStorage.StoreRecurringPayment(payment);
 
             // Display success message using Spectre.Console
-            AnsiConsole.Markup("[bold green]Recurring payment added successfully![/]");
+            AnsiConsole.Markup("[bold green]Recurring payment added successfully! \n[/]");
         }
 
 
@@ -142,28 +142,19 @@ namespace FinanceApp
 
        static void NewStatement()
         {
-            AnsiConsole.Markup("[bold cyan]Please Provide the Relevant year. YY [/]");
-            string selectedYearInput = Console.ReadLine();
+            // Use a SelectionPrompt to allow the user to select the year using arrow keys
+            int selectedYear = AnsiConsole.Prompt(
+                new SelectionPrompt<int>()
+                    .Title("Select the [green]relevant year[/]:")
+                    .AddChoices(Enumerable.Range(2000, 100).Select(year => year % 100).ToArray())  // Range from 00 to 99 for years
+            );
 
-            int selectedYear;
-            // Validate the year (expecting two digits, e.g., "24")
-            while (!int.TryParse(selectedYearInput, out selectedYear) || selectedYear < 0 || selectedYear > 99)
-            {
-                AnsiConsole.Markup("[bold red]Invalid year. Please provide a valid two-digit year (e.g., 24 for 2024). [/] ");
-                selectedYearInput = Console.ReadLine();
-            }
-
-            AnsiConsole.Markup("[bold cyan]Please Provide the Relevant Month. Name or Number. [/]");
-
-            string selectedMonthInput = Console.ReadLine();
-
-            int selectedMonth;
-            // Try to parse the month if it's a number or convert it if it's a name
-            while (!TryGetMonthNumber(selectedMonthInput, out selectedMonth))
-            {
-                AnsiConsole.Markup("[bold red]Invalid month. Please provide a valid month name (e.g., October) or number (e.g., 10). [/] ");
-                selectedMonthInput = Console.ReadLine();
-            }
+            // Use a SelectionPrompt to allow the user to select the month using arrow keys
+            int selectedMonth = AnsiConsole.Prompt(
+                new SelectionPrompt<int>()
+                    .Title("Select the [green]relevant month[/]:")
+                    .AddChoices(Enumerable.Range(1, 12).ToArray())  // Numbers from 1 to 12 for months
+            );
 
             // Determine the start and end months and handle the year overflow case
             int endMonth = selectedMonth;  // End month is the selected month (no incrementing)
@@ -189,6 +180,7 @@ namespace FinanceApp
             Console.Clear();
             AnsiConsole.Markup("[bold green]Making A New Statement...[/]\n");
         }
+
 
 
 
