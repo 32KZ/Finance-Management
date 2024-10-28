@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 using Spectre.Console;
 using NodaTime;
 using NodaTime.Text;
-
 using FinanceApp;
+
 //Main Namespace.
 namespace FinanceApp
 {
@@ -22,7 +22,6 @@ namespace FinanceApp
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string appDirectory = Path.Combine(documentsPath, "FinanceAppData");
             Directory.CreateDirectory(appDirectory);
-
             // Application start
             AnsiConsole.Markup("[bold green]Welcome to the Finance Management App![/]");
             
@@ -123,8 +122,6 @@ namespace FinanceApp
             // Display success message using Spectre.Console
             AnsiConsole.Markup("[bold green]Recurring payment added successfully! \n[/]");
         }
-
-
 
         static void AddOneOffPayment()
         {

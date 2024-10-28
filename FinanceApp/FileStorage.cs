@@ -62,6 +62,9 @@ public class FileStorage
     
     public static void StoreRecurringPayment(RecurringPayment payment)
         {
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string financeDirectory = Path.Combine(documentsPath, "Finance");
+            Directory.CreateDirectory(financeDirectory);
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Finance", "recurring_payments.json");
 
             // Load existing payments
