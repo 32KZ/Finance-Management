@@ -55,7 +55,7 @@ public class FileStorage
             // You can write initial content if needed here
         }
 
-        Console.WriteLine($"File created: {filePath}");
+        AnsiConsole.Markup($"[bold white]File created:[/] [bold green]{fileName}[/]");
     }
 
 

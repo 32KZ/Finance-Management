@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "QPiO+5z+d3Y=",
+  "dgSpecHash": "oFyLD/FpAr8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\FinanceApp\\FinanceApp.csproj",
+  "projectFilePath": "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\financeApp\\FinanceApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Daniel\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\Daniel\\.nuget\\packages\\nodatime\\3.2.0\\nodatime.3.2.0.nupkg.sha512",

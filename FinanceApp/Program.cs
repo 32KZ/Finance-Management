@@ -176,9 +176,7 @@ namespace FinanceApp
 
             // Call the method to create the statement file, passing in the selected year and months
             FileStorage.CreateStatementFile(startYear + 2000, startMonth, endYear + 2000, endMonth);  // Pass both the start and end years now
-
-            Console.Clear();
-            AnsiConsole.Markup("[bold green]Making A New Statement...[/]\n");
+            Console.WriteLine("\n");
         }
 
 

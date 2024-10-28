@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\FinanceApp\\FinanceApp.csproj": {}
+    "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\financeApp\\FinanceApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\FinanceApp\\FinanceApp.csproj": {
+    "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\financeApp\\FinanceApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\FinanceApp\\FinanceApp.csproj",
+        "projectUniqueName": "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\financeApp\\FinanceApp.csproj",
         "projectName": "FinanceApp",
-        "projectPath": "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\FinanceApp\\FinanceApp.csproj",
+        "projectPath": "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\financeApp\\FinanceApp.csproj",
         "packagesPath": "C:\\Users\\Daniel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\FinanceApp\\obj\\",
+        "outputPath": "C:\\Users\\Daniel\\Documents\\Github Projects\\Finance Management\\Finance-Management\\financeApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Daniel\\AppData\\Roaming\\NuGet\\NuGet.Config",
